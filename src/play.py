@@ -3,10 +3,22 @@ import numpy as np
 
 
 def PlayGame(board, num_games=8):
+    bg.command("set automatic game on") # Auto play
+    bg.command("set jacoby off") # I don't know, I just turned it off anyway...
+    bg.command("set crawford off") # I don't know, I just turned it off anyway...
+    bg.command("set automatic crawford off")
+    bg.command("set automatic roll off")
+    bg.command("set automatic move off")
+    bg.command("set matchlength 0")
+
+    bg.command("set cube use on")
+    bg.command("new match")
+    bg.command("set player 0 name O")
+    bg.command("set player 1 name X")
+
     command_set_board = "set board simple " + ' '.join(str(x) for x in board)
     for count in range(num_games):
         bg.command("new game")
-        gnubg.command('set automatic game off')
         bg.command(command_set_board)
         print("BOARD IS SET!!!")        
         board = bg.board()
@@ -45,4 +57,4 @@ def BoardPositionToSimple(board):
     return tuple(simple)
 
 
-PlayGame((1, 0, 0, 1, 2, 0, 5, 0, 2, 0, -1, 0, -3, 3, 0, 0, 0, -2, -2, -5, 0, 1, -2, 0, 0, 0), num_games=4)
+PlayGame((1, 0, 0, 1, 2, 0, 5, 0, 2, 0, -1, 0, -3, 3, 0, 0, 0, -2, -2, -5, 0, 1, -2, 0, 0, 0), num_games=9)
