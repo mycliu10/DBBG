@@ -1,0 +1,44 @@
+{
+    "ac_kwargs":	{
+        "activation":	"relu",
+        "hidden_sizes":	[
+            50,
+            50
+        ]
+    },
+    "actor_critic":	"mlp_actor_critic",
+    "clip_ratio":	0.2,
+    "env_fn":	"<function <lambda> at 0x7f9c10374e18>",
+    "epochs":	25000000000,
+    "exp_name":	"training_64x64relu",
+    "gamma":	0.99,
+    "lam":	0.97,
+    "logger":	{
+        "<spinup.utils.logx.EpochLogger object at 0x7f9c0eb854e0>":	{
+            "epoch_dict":	{},
+            "exp_name":	"training_64x64relu",
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"output_dir2",
+            "output_file":	{
+                "<_io.TextIOWrapper name='output_dir2/progress.txt' mode='w' encoding='ISO-8859-1'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "logger_kwargs":	{
+        "exp_name":	"training_64x64relu",
+        "output_dir":	"output_dir2"
+    },
+    "max_ep_len":	1000,
+    "pi_lr":	0.0003,
+    "save_freq":	1,
+    "seed":	0,
+    "steps_per_epoch":	5000,
+    "target_kl":	0.01,
+    "train_pi_iters":	80,
+    "train_v_iters":	80,
+    "vf_lr":	0.001
+}
