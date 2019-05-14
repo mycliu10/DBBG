@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH -J caller
+#SBATCH --mem-per-cpu=2000
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --export=all
+#SBATCH --out=./Forge-%j.out
+#SBATCH --time=24:00:00
+##SBATCH --mail-type=begin,end,fail,requeue
+##SBATCH --mail-user=yl8bc@mst.edu
+##SBATCH -p free
+##SBATCH -p requeue
+##SBATCH –constraint=EDR
+
+module purge
+module load gnubg
+python mpicaller.py
