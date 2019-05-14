@@ -77,9 +77,14 @@ class Doubling:
             
 
 
-import tensorflow as tf
-env_fn = lambda : Doubling()
-ac_kwargs = dict(hidden_sizes=[50,50], activation=tf.nn.relu)
-logger_kwargs = dict(output_dir='output_dir2', exp_name='training_64x64relu')
-ppo(env_fn=env_fn, ac_kwargs=ac_kwargs, steps_per_epoch=5000, epochs=25000000000, logger_kwargs=logger_kwargs, save_freq=1)
+def main():
 
+    import tensorflow as tf
+    env_fn = lambda : Doubling()
+    ac_kwargs = dict(hidden_sizes=[50,50], activation=tf.nn.relu)
+    logger_kwargs = dict(output_dir='output_dir3', exp_name='training_64x64relu')
+    ppo(env_fn=env_fn, ac_kwargs=ac_kwargs, steps_per_epoch=5000, epochs=25000000000, logger_kwargs=logger_kwargs, save_freq=1)
+
+
+if __name__=='__main__':
+    main()
