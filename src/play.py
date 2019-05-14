@@ -3,11 +3,13 @@ import numpy as np
 
 class Player:
     def __init__(self):
+        self.observation_space = np.zeros(50)
+
         return
 
     def reset(self):
         bg.command("new match")
-        bg.command("set automatic game on") # Auto play
+        bg.command("set automatic game off") # Auto play
         bg.command("set jacoby off") # I don't know, I just turned it off anyway...
         bg.command("set crawford off") # I don't know, I just turned it off anyway...
         bg.command("set automatic crawford off")
@@ -15,24 +17,76 @@ class Player:
         bg.command("set automatic move off")
         bg.command("set matchlength 0")
 
-        bg.command("set cube use on")
+        bg.command("set cube use off")
         bg.command("set player 0 name O")
         bg.command("set player 1 name X")
         bg.command("new game")
-        self._move_count = 0
-        self._cube_owner = bg.cubeinfo()['cubeowner']
+        bg.command("end game")
 
+        game_info = bg.match(0,1,0,1)['games']
+        print(len(game_info))
+        game_info = game_info[0]
+        self._moves = [move for move in game_info['game'] if move.get('board') and move['player']=='X']
+
+        self._num_moves = len(self._moves)
+        self._move_count = 0
+
+        #for move in self._moves:
+        #    print(move)
+        observation = bg.positionfromid(self._moves[self._move_count]['board'])
+        observation = np.concatenate(observation)
+
+        return observation
+        
     def step(self, action):
-        cube_info = bg.cubeinfo()
-        cube_owner = cube_info['cubeowner']
-        bg.command("swap players")
-        bg.command("play")
-        bg.command("swap players")
-        bg.command("play")
+        move = self._moves[self._move_count]
+        bg.command("new match")
+        bg.command("set cube use on")
+        bg.command("new game")
+        bg.command("set board {}".format(move['board']))
+        bg.command("set turn {}".format(move['player']))
+                
+        if action==1:
+            bg.command("double")
+        bg.command("end game")
+        
         game_info = bg.match(0,1,0,0)['games'][0]['info']
         winner = game_info['winner']
-        print(game_info)
-#
+
+        if winner=='X':
+            points_won = -game_info['points-won']
+        elif winner=='O':
+            points_won = game_info['points-won']
+        reward = points_won
+
+        self._move_count += 1
+        if self._move_count==self._num_moves:
+            done = True
+            observation = bg.positionfromid(move['board'])
+        else:
+            done = False
+            observation = bg.positionfromid(self._moves[self._move_count]['board'])
+        
+        info = bg.positionfromid(move['board'])
+        info = np.concatenate(info)
+        observation = np.concatenate(observation)
+
+        return observation, reward, done, info
+    
+    def episode(self, count_eps, dir_out="season01/"):
+        filename = "".join((dir_out,'eps',count_eps.__str__().zfill(8),'.dat'))
+        with open(filename, 'w+') as fh:
+            self.reset()
+            done = False
+            while not done:
+#                action = np.random.randint(2)
+                _, reward0, done, info = self.step(0)
+                self._move_count -= 1
+                _, reward1, done, info = self.step(1)
+                fh.write(" ".join(bit.__str__() for bit in info))
+                fh.write(" ".join((" ",reward0.__str__())))
+                fh.write(" ".join((" ",reward1.__str__(),"\n")))
+            
 
 def PlayGame(board, num_games=1):
     bg.command("set automatic game on") # Auto play
@@ -102,4 +156,18 @@ def BoardPositionToSimple(board):
     return tuple(simple)
 
 
-PlayGame((1, 0, 0, 1, 2, 0, 5, 0, 2, 0, -1, 0, -3, 3, 0, 0, 0, -2, -2, -5, 0, 1, -2, 0, 0, 0), num_games=1)
+#PlayGame((1, 0, 0, 1, 2, 0, 5, 0, 2, 0, -1, 0, -3, 3, 0, 0, 0, -2, -2, -5, 0, 1, -2, 0, 0, 0), num_games=1)
+
+#import argparse
+#parser = argparse.ArgumentParser(description='Process some integers.')
+#parser.add_argument('count', metavar='C', type=int, nargs='+', default=0,
+#                    help='count...')
+
+player = Player()
+
+#for count in range(10000):
+count = np.int(np.loadtxt("counter.dat"))
+player.episode(count, dir_out="finale/")
+
+
+
